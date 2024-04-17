@@ -31,20 +31,22 @@
 
 The study starts by running the Delft 3D model. Delft 3D is a comprehensive mechanistic modeling suite consisting of a series of modules for hydrodynamics, sediment transport, morphology and water quality in the fluvial, estuaries and coastal environments (Delft, 2011). The unit of the simulation is called flexible mesh, which is a curvilinear and boundary-fitted grid. The **FLOW module** is the core of Delft 3D and is a multi-dimensional hydrodynamic modeling system. The FLOW module **simulates the hydrodynamics** by modeling the unsteady flow and transport phenomena caused by tidal and meteorological forcing. The **WAQ module** models the water quality parameters and **sediment transport** as well from the hydrodynamic forcing. Sediment transport refers to the movement of particulates in the water. Water flow plays a vital role in this process, either by suspending particulates in the water column or pushing the particulates down to the bottom (Southard, 2006). The simulation here will **generate the SPM concentration** for the whole depth of the water. It can be a plug-in connected to the FLOW module and the two models can run as a whole.
 
-The Delft 3D hydrodynamics and sediment model of the Dutch Wadden Sea (DWS) in 2017 has been already run and validated by (Zijl, Weerdenburg, and Laan (2023)). In theory, we could obtain the model output directly for the machine learning training. However, to save space, the original model skipped the output of most hydrodynamics parameters. Our study needs to **re-run the benchmark model **to get the** **complete**** hydrodynamics parameters****. We will use its validated model settings and skip the unnecessary validation. **The model starts with the FLOW module to get all necessary hydrodynamics parameters first and continues with the WAQ plug-in to obtain the SPM**. Two years of data will apply: **2016 data are for model spin-off and 2017 data are used to get output**. There are in total 194000 grids, with resolution ranging from **200m (~1/8nm) to 0.5 nm (nautical mile).**
+The Delft 3D hydrodynamics and sediment model of the Dutch Wadden Sea (DWS) in 2017 has been already run and validated by (Zijl, Weerdenburg, and Laan (2023)). In theory, we could obtain the model output directly for the machine learning training. However, to save space, the original model skipped the output of most hydrodynamics parameters. Our study needs to **re-run the benchmark model to get the complete hydrodynamics parameters**. We will use its validated model settings and skip the unnecessary validation. **The model starts with the FLOW module to get all necessary hydrodynamics parameters first and continues with the WAQ plug-in to obtain the SPM**. Two years of data will apply: **2016 data are for model spin-off and 2017 data are used to get output**. There are in total 194000 grids, with resolution ranging from **200m (~1/8nm) to 0.5 nm (nautical mile).**
 
 - *Resolution map*
-    
-    ![Untitled](assets/Untitled%201.png)
-    
+
+    <img src="assets/Untitled%201.png" width="500" height="300">
 
 [Model Information](assets/11208054_006_0001.pdf)
 
 ## 1.2 Hydrodynamics Simulation (FLOW module)
 
 The module was run on Deltares’ cluster with 20 nodes (4vcpu * 5 procedure). The bathymetry (geometry file, numerics file, physics file), initial condition (restart file), boundary condition (external forcing: DWSM-FM_200m.ext) and meteorological data (wind file) were used as input in the FLOW module.  All hydrodynamics outputs are as follows.
+
 <details>
+
 <summary>Hydrodynamics Output </summary>
+
     Wrimap_waterlevel_s0                = 1                                                                   # water levels for previous time step
     Wrimap_waterlevel_s1                = 1                                                                   # water levels
     Wrimap_waterdepth                   = 1                                                                  # water depths
@@ -70,6 +72,7 @@ The module was run on Deltares’ cluster with 20 nodes (4vcpu * 5 procedure). T
     Wrimap_DTcell                       = 1                                                                   # time step per cell based on CFL
     Wrimap_tidal_potential              = 1                                                                   # tidal potential
     Wrimap_internal_tides_dissipation   = 1                                                                   # internal tides dissipation 
+
 </details> 
 
 The hydrodynamics output can be categorized into 5 types: water level, currents, discharge, salinity and temperature. 
@@ -80,18 +83,14 @@ The hydrodynamics work as the input (hydrodynamic forcing) of WAQ module’s sed
 
 ## 1.4 Postprocessing
 
-> **Temporal Selection:**  data in 2016 is regarded as the spin-up period and all daily data in 2017 were extracted , in total 365 from 2017-01-01 to 2017-12-31.
-> 
+- **Temporal Selection:**  data in 2016 is regarded as the spin-up period and all daily data in 2017 were extracted, in total 365 from 2017-01-01 to 2017-12-31.
 
-> **Layer Selection:** to synchronize with the remote sensing data afterwards, only the first layer will be used.
-> 
+- **Layer Selection:** to synchronize with the remote sensing data afterward, only the first layer will be used.
 
-> **Variable Selection:** The hydrodynamics outputs obtained have two structures: **[layer, variable, mesh2d_nfaces, time] (values differ by each flexible mesh)**; [layer, variable, mesh2d_nedges, time] (values differ by each edge of the mesh). The latter one is not very compatible with the input of machine learning. Besides, it contains the similar variables to the first one. Therefore, we took the first structure. Around 20 hydrodynamics parameters would be utilized as target . Further steps will be taken after the initial machine learning training and model explanation. For SPM, there are two partitions: IM1( inorganic matter 1) and IM2 (inorganic matter 2). We simply add them together to form the final SPM.
-> 
-> - Variables after selection
->     
->     ![Untitled](assets/Untitled%202.png)
->     
+- **Variable Selection:** The hydrodynamics outputs obtained have two structures: **[layer, variable, mesh2d_nfaces, time] (values differ by each flexible mesh)**; [layer, variable, mesh2d_nedges, time] (values differ by each edge of the mesh). The latter one is not very compatible with the input of machine learning. Besides, it contains similar variables to the first one. Therefore, we took the first structure. Around 20 hydrodynamics parameters would be utilized as targets. Further steps will be taken after the initial machine learning training and model explanation. For SPM, there are two partitions: IM1( inorganic matter 1) and IM2 (inorganic matter 2). We simply add them together to form the final SPM.
+-   
+    ![Untitled](assets/Untitled%202.png)
+     
 
 > **Spatial Selection:**  as our study area is DWS, it makes senses to limit our  area of training to DWS. There are two ways of doing it: (1) To rasterize the whole image first and mask the output raster: the problem  is that if we rasterize it based on the default resolution, we would have a great loss of spatial information on the coastal area (200m zone) as the default resolution is at the middle of 200m to 0.5nm. But if we rasterize it with 200m’s resolution, there will be great waste of computation at 0.5nm zone. (2) To mask the original output first with `[burn_vector_geometry](https://deltares.github.io/xugrid/examples/vector_conversion.html)`  function of xugrid package and rasterize it with the resolution of 200m (as our study area is totally at 200m zone). For the initial training, we took the measure(1) and rasterized the whole image with the default resolution followed by masking.
 > 
