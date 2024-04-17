@@ -32,7 +32,7 @@
     padding: 2px;">Workflow Map</div>
 </center> -->
 
-<div style="text-align:center">
+<div>
   <img src="assets/Untitled.png" width="500">
 </div>
 
@@ -45,16 +45,12 @@ The study starts by running the Delft 3D model. Delft 3D is a comprehensive mech
 
 The Delft 3D hydrodynamics and sediment model of the Dutch Wadden Sea (DWS) in 2017 has been already run and validated by (Zijl, Weerdenburg, and Laan (2023)). In theory, we could obtain the model output directly for the machine learning training. However, to save space, the original model skipped the output of most hydrodynamics parameters. Our study needs to **re-run the benchmark model to get the complete hydrodynamics parameters**. We will use its validated model settings and skip the unnecessary validation. **The model starts with the FLOW module to get all necessary hydrodynamics parameters first and continues with the WAQ plug-in to obtain the SPM**. Two years of data will apply: **2016 data are for model spin-off and 2017 data are used to get output**. There are in total 194000 grids, with resolution ranging from **200m (~1/8nm) to 0.5 nm (nautical mile).**
 
-<img src="assets/Untitled%201.png" width="500">
 
-*Resultion Map*
 
-<div style="text-align:center">
+<div>
   <img src="assets/Untitled%201.png" width="300">
+  <img src="assets/Untitled%202.png" width="300">
 </div>
-
-<div align="center"><img width="65" height="75" src="https://raw.githubusercontent.com/mzlogin/mzlogin.github.io/master/images/posts/markdown/demo.png"/></div>
-<center> *Resultion Map* </center>
 
 [Model Information](assets/11208054_006_0001.pdf)
 
