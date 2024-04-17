@@ -36,6 +36,7 @@
   <img src="assets/Untitled.png" width="500">
 </div>
 
+*Workflow Map*
 
 # 1_Mechanistic Model
 
@@ -48,8 +49,9 @@ The Delft 3D hydrodynamics and sediment model of the Dutch Wadden Sea (DWS) in 2
 
 <div>
   <img src="assets/Untitled%201.png" width="500">
-  <img src="assets/Untitled%202.png" width="500">
 </div>
+
+*Resolution Map*
 
 [Model Information](assets/11208054_006_0001.pdf)
 
@@ -58,37 +60,37 @@ The Delft 3D hydrodynamics and sediment model of the Dutch Wadden Sea (DWS) in 2
 The module was run on Deltares’ cluster with 20 nodes (4vcpu * 5 procedure). The bathymetry (geometry file, numerics file, physics file), initial condition (restart file), boundary condition (external forcing: DWSM-FM_200m.ext) and meteorological data (wind file) were used as input in the FLOW module.  All hydrodynamics outputs are as follows.
 
 <details>
-
 <summary>Hydrodynamics Output </summary>
 
-    Wrimap_waterlevel_s0                = 1                                                                   # water levels for previous time step
-    Wrimap_waterlevel_s1                = 1                                                                   # water levels
-    Wrimap_waterdepth                   = 1                                                                  # water depths
-    Wrimap_velocity_component_u0        = 1                                                                   # velocity component for previous time step
-    Wrimap_velocity_component_u1        = 1                                                                   # velocity component
-    Wrimap_velocity_vector              = 1                                                                   # cell-center velocity vectors
-    Wrimap_velocity_magnitude           = 1                                                                  # cell-center velocity vector magnitude
-    Wrimap_upward_velocity_component    = 1                                                                   # upward velocity component on cell interfaces
-    Wrimap_density_rho                  = 1                                                                   # flow density
-    Wrimap_horizontal_viscosity_viu     = 1                                                                   # horizontal viscosity
-    Wrimap_horizontal_diffusivity_diu   = 1                                                                   # horizontal diffusivity
-    Wrimap_flow_flux_q1                 = 1                                                                   # flow flux
-    Wrimap_numlimdt                     = 1                                                                   # the number times a cell was Courant limiting
-    Wrimap_taucurrent                   = 1                                                                   # the shear stress
-    Wrimap_chezy                        = 1                                                                   # the chezy roughness
-    Wrimap_salinity                     = 1                                                                   # salinity
-    Wrimap_temperature                  = 1                                                                   # temperature
-    Wrimap_turbulence                   = 1                                                                   # vicww, k and eps
-    Wrimap_trachytopes                  = 1                                                                   # trachytope roughnesses
-    Wrimap_wind                         = 1                                                                   # wind velocities
-    Wrimap_windstress                   = 1                                                                   # wind stress
-    Wrimap_heat_fluxes                  = 1                                                                   # heat fluxes
-    Wrimap_DTcell                       = 1                                                                   # time step per cell based on CFL
-    Wrimap_tidal_potential              = 1                                                                   # tidal potential
-    Wrimap_internal_tides_dissipation   = 1                                                                   # internal tides dissipation 
+    Wrimap_waterlevel_s0 = 1 # water levels for previous time step
+    Wrimap_waterlevel_s1 = 1 # water levels
+    Wrimap_waterdepth = 1 # water depths
+    Wrimap_velocity_component_u0 = 1 # velocity component for previous time step
+    Wrimap_velocity_component_u1 = 1 # velocity component
+    Wrimap_velocity_vector = 1 # cell-center velocity vectors
+    Wrimap_velocity_magnitude = 1 # cell-center velocity vector magnitude
+    Wrimap_upward_velocity_component = 1 # upward velocity component on cell interfaces
+    Wrimap_density_rho = 1 # flow density
+    Wrimap_horizontal_viscosity_viu = 1 # horizontal viscosity
+    Wrimap_horizontal_diffusivity_diu = 1 # horizontal diffusivity
+    Wrimap_flow_flux_q1 = 1 # flow flux
+    Wrimap_numlimdt = 1 # the number times a cell was Courant limiting
+    Wrimap_taucurrent = 1 # the shear stress
+    Wrimap_chezy = 1 # the chezy roughness
+    Wrimap_salinity = 1 # salinity
+    Wrimap_temperature = 1 # temperature
+    Wrimap_turbulence = 1 # vicww, k and eps
+    Wrimap_trachytopes = 1 # trachytope roughnesses
+    Wrimap_wind = 1 # wind velocities
+    Wrimap_windstress = 1 # wind stress
+    Wrimap_heat_fluxes = 1 # heat fluxes
+    Wrimap_DTcell = 1 # time step per cell based on CFL
+    Wrimap_tidal_potential = 1 # tidal potential
+    Wrimap_internal_tides_dissipation = 1 # internal tides dissipation
 
 </details> 
 
+>
 The hydrodynamics output can be categorized into 5 types: water level, currents, discharge, salinity and temperature. 
 
 ## 1.3 Sediment Transport Simulation  (WAQ module as a plug-in into FLOW module)
@@ -98,56 +100,71 @@ The hydrodynamics work as the input (hydrodynamic forcing) of WAQ module’s sed
 ## 1.4 Postprocessing
 
 - **Temporal Selection:**  data in 2016 is regarded as the spin-up period and all daily data in 2017 were extracted, in total 365 from 2017-01-01 to 2017-12-31.
-
+>
 - **Layer Selection:** to synchronize with the remote sensing data afterward, only the first layer will be used.
+>
+- **Variable Selection:** The hydrodynamics outputs obtained have two structures: **[layer, variable, mesh2d_nfaces, time] (values differ by each flexible mesh)**; [layer, variable, mesh2d_nedges, time] (values differ by each edge of the mesh). The latter one is not very compatible with the input of machine learning. Besides, it contains similar variables to the first one. Therefore, we took the first structure. 
+    >
+     Around 20 hydrodynamics parameters would be utilized as targets. Further steps will be taken after the initial machine learning training and model explanation. For SPM, there are two partitions: IM1(inorganic matter 1) and IM2 (inorganic matter 2). We simply add them together to form the final SPM.
+    >
+    <Details>
+    <Summary>Variables after selection</summary>
+    <div>
+    <img src="assets/Untitled%202.png" width="400">
+    </div>
+    </Details>
+>
+- **Spatial Selection:**  as our study area is DWS, it makes sense to limit our area of training to DWS. There are two ways of doing it: 
+  >
+  1. To rasterize the whole image first and mask the output raster: the problem is that if we rasterize it based on the default resolution, we would have a great loss of spatial information on the coastal area (200m zone) as the default resolution is at the middle of 200m to 0.5nm. But if we rasterize it with 200m’s resolution, there will be a great waste of computation at the 0.5 nm zone. 
+  2. To mask the original output first with [burn_vector_geometry](https://deltares.github.io/xugrid/examples/vector_conversion.html) function of xugrid package and rasterize it with the resolution of 200m (as our study area is totally at 200m zone). 
+  >
+  For the initial training, we took measure(1) and rasterized the whole image with the default resolution followed by masking.
 
-- **Variable Selection:** The hydrodynamics outputs obtained have two structures: **[layer, variable, mesh2d_nfaces, time] (values differ by each flexible mesh)**; [layer, variable, mesh2d_nedges, time] (values differ by each edge of the mesh). The latter one is not very compatible with the input of machine learning. Besides, it contains similar variables to the first one. Therefore, we took the first structure. Around 20 hydrodynamics parameters would be utilized as targets. Further steps will be taken after the initial machine learning training and model explanation. For SPM, there are two partitions: IM1( inorganic matter 1) and IM2 (inorganic matter 2). We simply add them together to form the final SPM.
--   
-    ![Untitled](assets/Untitled%202.png)
-     
+>
+- **Rasterization**: The output we obtained is united as flexible meshes, which are irregular 2D grids. To extract the spatial information in the following machine learning, convolution needs to be applied. As common convolution requires a regular grid, we need to rasterize the output data into rasters. The structure will shift from [layer, variable, mesh2d_nfaces, time] to **[layer, variable, longitude, latitude, time]**. The rasterization can be performed by dfmt.rasterize tools. Then the format of data is the more user-friendly x-array.
+>  
 
-> **Spatial Selection:**  as our study area is DWS, it makes senses to limit our  area of training to DWS. There are two ways of doing it: (1) To rasterize the whole image first and mask the output raster: the problem  is that if we rasterize it based on the default resolution, we would have a great loss of spatial information on the coastal area (200m zone) as the default resolution is at the middle of 200m to 0.5nm. But if we rasterize it with 200m’s resolution, there will be great waste of computation at 0.5nm zone. (2) To mask the original output first with `[burn_vector_geometry](https://deltares.github.io/xugrid/examples/vector_conversion.html)`  function of xugrid package and rasterize it with the resolution of 200m (as our study area is totally at 200m zone). For the initial training, we took the measure(1) and rasterized the whole image with the default resolution followed by masking.
-> 
-> 
-> > **Rasterization**: The output we obtained are united as flexible meshes, which are irregular 2D grids. To extract the spatial information in the following machine learning,  the convolution needs to be applied. As common convolution  requires regular grid, we need to rasterize the output data into rasters. The structure will shift from [layer, variable, mesh2d_nfaces, time] to **** **[layer, variable, longitude, latitude, time].** The rasterization can be performed by dfmt.rasterize tools. Then the format of data is the more user-friendly x-array.
-> > 
+After the above steps, the structure of the output becomes **[variable, longitude, latitude, time] ([20+1, 400, 294, 365]).** Therefore, variable includes 20 hydrodynamics parameters and SPM, with the possibility to be simplified. Longitude and latitude is 400*294, which will be improved with better rasterization method. Time includes 365 values from 2017-01-01 to 2017-12-31. 
 
-After above steps, the structure of the output becomes **[variable, longitude, latitude, time] ([20+1, 400, 294, 365]).** Thereinto, variable includes 20 hydrodynamics parameters and SPM , with the possibility to be simplified. Longitude and latitude is 400*294, which will be improved with better rasterization method. Time includes 365 values from 2017-01-01 to 2017-12-31. 
+<div>
+  <img src="assets/Untitled%203.png" width="500">
+</div>
 
-- One slice of SPM on 2017-04-01.
-    
-    ![Untitled](assets/Untitled%203.png)
+*One slice of SPM on 2017-04-01*
     
 
 # 2_Non-mechanistic Model
 
 ## 2.1 Initial Machine Learning
 
-![Untitled](assets/Untitled%204.png)
+<div>
+  <img src="assets/Untitled%204.png" width="500">
+</div>
 
-To start the machine learning, **FCNN (Fully Connected Neural Network)** was applied. It  a basic neural network architecture where each neuron in a layer is connected to every neuron in the subsequent layer, forming a densely connected network.  FCNN enables the transformation of input data through successive layers of linear operations and non-linear activations, ultimately producing output relevant to the given task. We put **hydrodynamics** in the **input layer** and **SPM** in the **output layer**. The model was set up in **Keras** of Tensoflow. It is a high-level deep learning API written in Python, which provides a user-friendly interface for building, training, and deploying neural networks. It allows for seamless experimentation with various neural network architectures and facilitates rapid prototyping of machine learning models.
+To start the machine learning, **FCNN (Fully Connected Neural Network)** was applied. It is a basic neural network architecture where each neuron in a layer is connected to every neuron in the subsequent layer, forming a densely connected network.  FCNN enables the transformation of input data through successive layers of linear operations and non-linear activations, ultimately producing output relevant to the given task. We put **hydrodynamics** in the **input layer** and **SPM** in the **output layer**. The model was set up in **Keras** of Tensorflow. It is a high-level deep learning API written in Python, which provides a user-friendly interface for building, training, and deploying neural networks. It allows for seamless experimentation with various neural network architectures and facilitates rapid prototyping of machine learning models.
 
 ### 2.1.1 Model Setting
 
 1. Take a sample space and time: 
-    
-    DWS + August 2017. As the neural network cannot deal with nan value, all nan values were replaced by 0.
-    
+  
+    >DWS + August 2017. As the neural network cannot deal with nan values, all nan values were replaced by 0.
+
 2. Input layer (each neuron here stands for a 1D vector of one variable’s values): 
     
-    this layer is meant for the feature (i.e., hydrodynamics). The data structure was flattened from **[variable, longitude, latitude, time] ([20, 400, 294, 31])** to  **[variable, longitude *latitude*time] ([20, 400*294*31]).** Training, validation and test dataset were set as 70%, 15%, 15%. All features went through the **normalization** to make sure they are comparable.
+    >this layer is meant for the feature (i.e., hydrodynamics). The data structure was flattened from **[variable, longitude, latitude, time] ([20, 400, 294, 31])** to  **[variable, longitude *latitude*time] ([20, 400*294*31]).** Training, validation and test dataset were set as 70%, 15%, 15%. All features went through the **normalization** to make sure they are comparable.
     
 3. Output layer (each neuron here stands for a 1D vector of one variable’s values): 
     
-    this layer is meant for the target(i.e., SPM). As we only have one variable, so one neuron was used here. The data structure was flattened from **[longitude, latitude, time] ([400, 294, 31])** to  **[ longitude *latitude*time] ([400*294*31]).** Training, validation and test dataset were set as 70%, 15%, 15%. The SPM value went through **logarithm** transformation to make its skew distribution normal.
+    >this layer is meant for the target(i.e., SPM). As we only have one variable, so one neuron was used here. The data structure was flattened from **[longitude, latitude, time] ([400, 294, 31])** to  **[ longitude *latitude*time] ([400*294*31]).** Training, validation and test dataset were set as 70%, 15%, 15%. The SPM value went through **logarithm** transformation to make its skew distribution normal.
     
 4. Hidden layer:
     
-    Different number of layers and neurons were testes and compared, including: **Tiny**[1 layer * 16neurons]; **Small**[2 layer * 16 neurons]; **Medium**[3 layer * 64 neurons]; **Large** [4 layers * 512 neurons]
+    >Different number of layers and neurons were testes and compared, including: **Tiny**[1 layer * 16neurons]; **Small**[2 layer * 16 neurons]; **Medium**[3 layer * 64 neurons]; **Large** [4 layers * 512 neurons]
     
 5. Model optimizer: 
     
-    **Learning rate** determines the step size of parameter updates during training in neural networks, playing a crucial role in balancing convergence speed and model stability. The "**InverseTimeDecay**" scheduler gradually reduces the learning rate over time, with the rate of reduction inversely proportional to the training step. This helps prevent overshooting of the optimal solution (going beyond the best convergence) and improves overall training performance.
+    >**Learning rate** determines the step size of parameter updates during training in neural networks, playing a crucial role in balancing convergence speed and model stability. The "**InverseTimeDecay**" scheduler gradually reduces the learning rate over time, with the rate of reduction inversely proportional to the training step. This helps prevent overshooting of the optimal solution (going beyond the best convergence) and improves overall training performance.
     
     ```python
     lr_schedule = tf.keras.optimizers.schedules.InverseTimeDecay(0.001, decay_steps=STEPS_PER_EPOCH*1000,decay_rate=1,staircase=False)
@@ -155,85 +172,84 @@ To start the machine learning, **FCNN (Fully Connected Neural Network)** was app
     
 6. Model evaluation:
     
-    Since this is a regression issue, **MAE** (appointed as model loss), **MSE** and **R-Square** were used for model evaluation. The model loss curves for training and validation datasets were essential for the judgement of the model performance.
+    >Since this is a regression issue, **MAE** (appointed as model loss), **MSE** and **R-Square** were used for model evaluation. The model loss curves for training and validation datasets were essential for the judgement of the model performance.
     
 
 ### 2.1.2 Model Result
 
-![Tiny model and Small model fit well, but with higher MAE. Medium model has lower MAE with a little overfitting. Large model has the lowest MAE, but the overfitting is very obvious.](assets/Untitled%205.png)
+<div>
+  <img src="assets/Untitled%205.png" width="400">
+</div>
 
-Tiny model and Small model fit well, but with higher MAE. Medium model has lower MAE with a little overfitting. Large model has the lowest MAE, but the overfitting is very obvious.
+<div>
+  <img src="assets/Untitled%206.png" width="200">
+  <img src="assets/Untitled%207.png" width="200">
+  <img src="assets/Untitled%208.png" width="200">
+  <img src="assets/Untitled%209.png" width="200">
+</div>
 
-![Tiny](assets/Untitled%206.png)
+*From left to right, it's Tiny, Small, Medium, Large model. Tiny model and Small _model fit well but with_ higher MAE. Medium model has a lower MAE with a little overfitting. Large model has the lowest MAE, but the overfitting is very obvious*
 
-Tiny
+See above, the **medium** model [3layer*64 neurons] has the relatively best performance. This model result provides insight into the better structure of the neural network that fits into the pattern of the sediment process. It can also be used to compare the following types of models. 
 
-![Small](assets/Untitled%207.png)
-
-Small
-
-![Medium](assets/Untitled%208.png)
-
-Medium
-
-![Large](assets/Untitled%209.png)
-
-Large
-
-See above, the **medium** model [3layer*64 neurons] has the relatively the best performance. This model result provides the insight of the better structure of neural network that fits into the pattern of sediment process. It can also be used to compare the following types of models.
 
 **SHAP (SHapley Additive exPlanations)** is a game theoretic approach with the ability to explain the output of any machine learning model (Lundberg and Lee, 2017). Grounded on the Shapley value in game theory, SHAP provides a fair and consistent way of credit allocation with local explanations. The contribution of each variables to the model prediction has been by predicted by SHAP, with the result as follows:
 
-![Untitled](assets/Untitled%2010.png)
+<div>
+  <img src="assets/Untitled%2010.png" width="400">
+</div>
 
 We can stratify them into 3 Tiers by natural breaks:
 
-**Tier 1**:
-
+- **Tier 1**:
 Water Level (mesh_s1, mesh2d_s0)
 
-**Tier 2**: 
+- **Tier 2**: 
+Water quality Output:
+    >1: Tau - *total bottom shear stress (N/m2)*, 
+    2: TauFlow - *bottom shear stress by FLOW (N/m2),
+    3: WaveHeight - *calculated height of a wind induced wave (m),* 4:WavePeriod - *calculated period of a wind induced wave (s)*, 
+    5: WaveLength - *calculated length of a wind induced wave (m)*)
 
-Water quality Output  (1: Tau - *total bottom shear stress (N/m2)*, 2:TauFlow - *bottom shear stress by FLOW (N/m2),* 3: WaveHeight - *calculated height of a wind induced wave (m),* 4:WavePeriod - *calculated period of a wind induced wave (s)*, 5: WaveLength - *calculated length of a wind induced wave (m)*), Temperature
+    Temperature
 
-**Tier 3**:
-
+- **Tier 3**:
 Other variables
 
-Based on those tiers, for the further training considering finer variable selection, there would be priority order from Tier 1 to Tier 3.
+Based on those tiers, for further training considering finer variable selection, there would be a priority order from Tier 1 to Tier 3.
 
 ## 2.2 Convolutional LSTM (ConvLSTM)
 
 ### 2.2.1 Introduction
 
-The initial machine learning  in essence didn’t differentiate the temporal and spatial aspect of dataset. **Convolutional LSTM  (ConvLSTM)** is a special neural network that combines **convolutional neural networks (CNN)** and **long short-term memory networks (LSTM)** to process **spatiotemporal data**. The motivation behind the ConvLSTM model is to overcome the limitations of traditional RNN and CNN by combining them. **ConvLSTM introduces convolutional operations in the spatial domain and recurrent operations in the temporal domain**, while preserving the memory units and gating mechanisms of LSTM, enabling it to capture features in both time and space, considering the long-term dependencies in sequential data and the local correlations in spatial structures.
+The initial machine learning  in essence didn’t differentiate the temporal and spatial aspects of dataset. **Convolutional LSTM  (ConvLSTM)** is a special neural network that combines **convolutional neural networks (CNN)** and **long short-term memory networks (LSTM)** to process **spatiotemporal data**. The motivation behind the ConvLSTM model is to overcome the limitations of traditional RNN and CNN by combining them. **ConvLSTM introduces convolutional operations in the spatial domain and recurrent operations in the temporal domain**, while preserving the memory units and gating mechanisms of LSTM, enabling it to capture features in both time and space, considering the long-term dependencies in sequential data and the local correlations in spatial structures.
+
 
 > [LSTM](https://colah.github.io/posts/2015-08-Understanding-LSTMs/): LSTM (Long Short-Term Memory) is a type of recurrent neural network (RNN) architecture designed to capture long-term dependencies in sequential data by mitigating the vanishing gradient problem. It incorporates specialized memory cells and gating mechanisms to selectively retain and update information over time. LSTM expects input to have structure as [variable, value, time_step].
-> 
+><div>
+>  <img src="assets/Untitled%2011.png" width="500">
+></div>
+>*A recurrent neural network (RNN) can be thought of as multiple copies of the same network, each passing a message to a successor. In the above diagram, A refers to a chunk of the neural network, Xt is input and ht is output. Unfortunately, as that gap grows, RNNs become unable to learn to connect the information.*
+><div>
+>  <img src="assets/Untitled%2012.png" width="500">
+>  <img src="assets/Untitled%2013.png" width="500">
+></div>
+>*LSTMs also have this chain-like structure, but the repeating module has a different structure. Instead of having a single neural network layer, there are four, interacting in a very special way. They function as “gates” to forget unnecessary information, choose what new information needs to be stored in the cell state and decide what to output.*
 
-![A recurrent neural network (RNN) can be thought of as multiple copies of the same network, each passing a message to a successor.  In the above diagram, A refers to a chunk of neural network, xt is input and ht is output. Unfortunately, as that gap grows, RNNs become unable to learn to connect the information. ](assets/Untitled%2011.png)
-
-A recurrent neural network (RNN) can be thought of as multiple copies of the same network, each passing a message to a successor.  In the above diagram, A refers to a chunk of neural network, xt is input and ht is output. Unfortunately, as that gap grows, RNNs become unable to learn to connect the information. 
-
-![LSTMs also have this chain like structure, but the repeating module has a different structure. Instead of having a single neural network layer, there are four, interacting in a very special way. They function as “gates” to forget unnecessary information, choose what new information needed to be stored in the cell state and decide what to output.](assets/Untitled%2012.png)
-
-LSTMs also have this chain like structure, but the repeating module has a different structure. Instead of having a single neural network layer, there are four, interacting in a very special way. They function as “gates” to forget unnecessary information, choose what new information needed to be stored in the cell state and decide what to output.
-
-![Untitled](assets/Untitled%2013.png)
 
 > [CNN](https://colah.github.io/posts/2014-07-Conv-Nets-Modular/): CNN (Convolutional Neural Network) is a deep learning architecture widely used for processing structured grid-like data such as images. It employs convolutional layers to automatically learn hierarchical patterns and features directly from the input data, enabling effective feature extraction and spatial hierarchies. It usually expects input structure as [batch_size, x, y, variable].
-> 
+><div>
+>  <img src="assets/Untitled%2014.png" width="300">
+>  <img src="assets/Untitled%2015.png" width="250">
+></div>
 
-![Untitled](assets/Untitled%2014.png)
 
-![Untitled](assets/Untitled%2015.png)
 
 > [ConvLSTM](https://zhuanlan.zhihu.com/p/675543830): In essence, ConvLSTM is a special LSTM. It follows the typical LSTM structure which focuses on predicting data on a timestep or a time series based on the input data of a time series. While, it adopts CNN's feature extraction approach in the spatial domain and replaces all fully connected structures in LSTM with convolutional structures. In that way, it enables the input data to have a spatialtemporal structure like **[batch_size, time_step, variables, x, y]**.
-> 
-
-![Untitled](assets/Untitled%2016.png)
-
-![Untitled](assets/Untitled%2017.png)
+><div>
+>  <img src="assets/Untitled%2016.png" width="400">
+>  <img src="assets/Untitled%2017.png" width="300">
+></div>
 
 ### 2.2.2 Model Setting
 
