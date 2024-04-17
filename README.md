@@ -63,16 +63,8 @@ The Delft 3D hydrodynamics and sediment model of the Dutch Wadden Sea (DWS) in 2
   <img src="assets/Untitled%201.png" width="300">
 </div>
 
-<div>
-    <img style="border-radius: 0.3125em;
-    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="assets/Untitled.png" width= "500"/>
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">Workflow Map</div>
-</div>
+<div align="center"><img width="65" height="75" src="https://raw.githubusercontent.com/mzlogin/mzlogin.github.io/master/images/posts/markdown/demo.png"/></div>
+<center>*Resultion Map*</center>
 
 [Model Information](assets/11208054_006_0001.pdf)
 
