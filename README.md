@@ -48,7 +48,7 @@ The Delft 3D hydrodynamics and sediment model of the Dutch Wadden Sea (DWS) in 2
 
 <div>
   <img src="assets/Untitled%201.png" width="500">
-  <img src="assets/Untitled%202.png" width="300">
+  <img src="assets/Untitled%202.png" width="500">
 </div>
 
 [Model Information](assets/11208054_006_0001.pdf)
